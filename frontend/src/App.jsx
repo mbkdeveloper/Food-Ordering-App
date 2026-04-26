@@ -1,34 +1,44 @@
-import { useState } from "react";
-import Navbar from "./components/Navbar/Navbar";
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home/Home";
-import Cart from "./pages/Cart/Cart";
-import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
-import Footer from "./components/Footer/Footer";
-import LoginPopup from "./components/LoginPopup/LoginPopup";
-import Verify from "./pages/Verify/Verify";
-import MyOrders from "./pages/MyOrders/MyOrders";
+import React, { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
+import NavbarComponent from './components/Navbar';
+import Home from './pages/client/Home';
+import Login from './pages/client/Login';
+import Register from './pages/client/Register';
+import Dashboard from './pages/admin/Dashboard';
+import Cart from './pages/client/Cart';
+import PlaceOrder from './pages/client/PlaceOrder';
+import Payment from './pages/client/Payment';
+import MyOrders from './pages/client/MyOrders';
 
 const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
-  return (
-    <>
-      {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : <></>}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", margin: "0 auto" }}>
-        <main style={{ flex: 1 }}>
-          <Navbar setShowLogin={setShowLogin} />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/cart" element={<Cart setShowLogin={setShowLogin}/>} />
-            <Route path="/order" element={<PlaceOrder />} />
-            <Route path="/verify" element={<Verify />} />
-            <Route path="/myorders" element={<MyOrders />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </>
-  );
+    const { user } = useContext(AuthContext);
+
+    const ProtectedRoute = ({ children, requiredRole }) => {
+        if (!user) return <Navigate to="/login" />;
+        if (requiredRole && user.role !== requiredRole) return <Navigate to="/" />;
+        return children;
+    };
+
+    return (
+        <>
+            {(!user || user.role !== 'admin') && <NavbarComponent />}
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={!user ? <Login /> : <Navigate to={user.role === 'admin' ? '/admin' : '/'} />} />
+                <Route path="/register" element={!user ? <Register /> : <Navigate to={user.role === 'admin' ? '/admin' : '/'} />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/order" element={<ProtectedRoute requiredRole="client"><PlaceOrder /></ProtectedRoute>} />
+                <Route path="/payment" element={<ProtectedRoute requiredRole="client"><Payment /></ProtectedRoute>} />
+                <Route path="/myorders" element={<ProtectedRoute requiredRole="client"><MyOrders /></ProtectedRoute>} />
+                <Route path="/admin/*" element={
+                    <ProtectedRoute requiredRole="admin">
+                        <Dashboard />
+                    </ProtectedRoute>
+                } />
+            </Routes>
+        </>
+    );
 };
 
 export default App;

@@ -7,16 +7,22 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 const placeOrder = async (req,res)=>{
 
-  const frontend_url= "http://localhost:5174";
+  const frontend_url= "http://localhost:5173";
   try {
     const newOrder= new orderModel({
        userId:req.body.userId,
        items:req.body.items,
        amount:req.body.amount,
-       address:req.body.address
+       address:req.body.address,
+       payment: req.body.paymentMethod === 'COD' ? false : false,
+       status: "Food Processing"
     })
     await newOrder.save();
     await userModel.findByIdAndUpdate(req.body.userId,{cartData:{}});
+
+    if (req.body.paymentMethod === 'COD') {
+        return res.json({success:true, message: "Order placed successfully"});
+    }
 
     const line_items= req.body.items.map((item)=>({
         price_data:{

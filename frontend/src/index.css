@@ -1,27 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
-*{
-  padding: 0;
+:root {
+  --primary-color: #e63946;
+  --secondary-color: #f4a261;
+  --accent-color: #2a9d8f;
+  --bg-light: #fefae0;
+  --text-dark: #264653;
+  --text-light: #f8f9fa;
+}
+
+body {
   margin: 0;
-  box-sizing: border-box;
-  font-family: Outfit;
-  scroll-behavior: smooth;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-light) !important;
+  color: var(--text-dark) !important;
 }
-body{
-  min-height: 100vh;
+
+/* Overrides for Bootstrap to match palette */
+.btn-danger {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    border-radius: 8px !important;
 }
-a, Link{
-  text-decoration: none;
-  color: inherit;
+
+.btn-outline-danger {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    border-radius: 8px !important;
 }
-main{
-  width: 80%;
-  margin: auto;
+
+.btn-outline-danger:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
 }
-@keyframes fadeIn {
-  0%{
-    opacity: 0;
-  }
-  100%{
-    opacity: 1;
-  }
+
+.text-danger {
+    color: var(--primary-color) !important;
+}
+
+.bg-danger {
+    background-color: var(--primary-color) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--primary-color) !important;
+}
+
+.food-card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Disable animations as requested */
+* {
+  animation: none !important;
+  transition: none !important;
 }
